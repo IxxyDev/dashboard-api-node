@@ -15,18 +15,23 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.App = void 0;
 const express_1 = __importDefault(require("express"));
 class App {
-    constructor(logger, userController) {
+    constructor(logger, userController, exceptionFilter) {
         this.app = (0, express_1.default)();
         this.PORT = 8000;
         this.logger = logger;
         this.userController = userController;
+        this.exceptionFilter = exceptionFilter;
     }
     useRoutes() {
         this.app.use('/users', this.userController.router);
     }
+    useExceptionFilters() {
+        this.app.use(this.exceptionFilter.catch.bind(this.exceptionFilter));
+    }
     init() {
         return __awaiter(this, void 0, void 0, function* () {
             this.useRoutes();
+            this.useExceptionFilters();
             this.server = this.app.listen(this.PORT);
             this.logger.log(`Server is running on http://localhost:${this.PORT}`);
         });
