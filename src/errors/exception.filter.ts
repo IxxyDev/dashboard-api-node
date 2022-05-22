@@ -3,7 +3,7 @@ import { IExceptionFilter } from './exception.filter.interface';
 import { HTTPError } from './http-error.class';
 import { inject, injectable } from 'inversify';
 import { ILogger } from '../logger/logger.interface';
-import { TYPES } from '../../types';
+import { TYPES } from '../types';
 import 'reflect-metadata';
 
 @injectable()
