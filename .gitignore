@@ -2,3 +2,6 @@
 /dist
 /.idea
 /.clinic
+/.env
+/prisma/dev.db
+/prisma/dev.db-journal
