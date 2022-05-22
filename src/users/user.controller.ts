@@ -8,11 +8,14 @@ import 'reflect-metadata';
 import { IUserController } from './user.conroller.interface';
 import { UserRegisterDto } from './dto/user-register.dto';
 import { UserLoginDto } from './dto/user-login.dto';
-import { User } from './dto/user.entity';
+import { IUserService } from './user.service.interface';
 
 @injectable()
 export class UserController extends BaseController implements IUserController {
-	constructor(@inject(TYPES.ILogger) private loggerService: ILogger) {
+	constructor(
+		@inject(TYPES.ILogger) private loggerService: ILogger,
+		@inject(TYPES.UserService) private userService: IUserService,
+	) {
 		super(loggerService);
 		this.bindRoutes([
 			{
@@ -34,9 +37,12 @@ export class UserController extends BaseController implements IUserController {
 		// this.ok(res, 'login')
 	}
 
-	public async register({ body }: Request<{}, {}, UserRegisterDto>, res: Response): Promise<void> {
-		const newUser = new User(body.email, body.name);
-		await newUser.setPassword(body.password);
-		this.ok(res, newUser);
+	public async register({ body }: Request<{}, {}, UserRegisterDto>, res: Response, next: NextFunction): Promise<void> {
+		const result = await this.userService.createUser(body);
+		if (!result) {
+			return next(new HTTPError(422, 'User already exists'));
+		}
+
+		this.ok(res, { email: result.email });
 	}
 }
